@@ -5,14 +5,14 @@ LED2_PIN = 4
 LEDOUT_PORT = A
 LEDOUT_PIN = 1
 B1_PORT = A
-B1_PIN = 3
-B2_PORT = A
-B2_PIN = 5
+B1_PIN = 5
+B2_PORT =A
+B2_PIN = 3
 SWITCH_PORT = A
 SWITCH_PIN = 0
 
 MCU=attiny24
-F_CPU=1200000
+F_CPU = 16000000
 CC=avr-gcc
 OBJCOPY=avr-objcopy
 CFLAGS=-std=c99 -Wall -g -Os -mmcu=${MCU} -DF_CPU=${F_CPU} -I.
@@ -41,23 +41,77 @@ endif
 
 ifeq ($(B1_PORT), B)
 	DDR_B1 = DDRB
-	PORT_B1 =PORTB
-	PIN_B1 =PINB
+	PORT_B1 = PORTB
+	PIN_B1 = PINB
+	ifeq ($(MCU), attiny24)
+		PCIE_B1 = PCIE1
+		PCMSK_B1 = PCMSK1
+	else ifeq ($(MCU), attiny44)
+		PCIE_B1 = PCIE1
+		PCMSK_B1 = PCMSK1
+	else ifeq ($(MCU), attiny84)
+		PCIE_B1 = PCIE1
+		PCMSK_B1 = PCMSK1
+	else
+		PCIE_B1 = PCIE
+		PCMSK_B1 = PCMSK
+	endif
 else
-	DDR_B1 =DDRA
-	PORT_B1 =PORTA
-	PIN_B1 =PINA
+	DDR_B1 = DDRA
+	PORT_B1 = PORTA
+	PIN_B1 = PINA
+	ifeq ($(MCU), attiny24)
+		PCIE_B1 = PCIE0
+		PCMSK_B1 = PCMSK0
+	else ifeq ($(MCU), attiny44)
+		PCIE_B1 = PCIE0
+		PCMSK_B1 = PCMSK0
+	else ifeq ($(MCU), attiny84)
+		PCIE_B1 = PCIE0
+		PCMSK_B1 = PCMSK0
+	else 
+		PCIE_B1 = PCIE
+		PCMSK_B1 = PCMSK
+	endif
 endif
 
+
 ifeq ($(B2_PORT), B)
-	DDR_B2 = DDRB
-	PORT_B2 =PORTB
-	PIN_B2 =PINB
+ 	DDR_B2 = DDRB
+ 	PORT_B2 = PORTB
+ 	PIN_B2 = PINB
+	ifeq ($(MCU), attiny24)
+		PCIE_B2 = PCIE1
+		PCMSK_B2 = PCMSK1
+	else ifeq ($(MCU), attiny44)
+		PCIE_B2 = PCIE1
+		PCMSK_B2 = PCMSK1
+	else ifeq ($(MCU), attiny84)
+		PCIE_B2 = PCIE1
+		PCMSK_B2 = PCMSK1
+	else
+		PCIE_B2 = PCIE
+		PCMSK_B2 = PCMSK
+	endif
 else
-	DDR_B2 =DDRA
-	PORT_B2 =PORTA
-	PIN_B2 =PINA
+	DDR_B2 = DDRA
+	PORT_B2 = PORTA
+	PIN_B2 = PINA
+	ifeq ($(MCU), attiny24)
+		PCIE_B2 = PCIE0
+		PCMSK_B2 = PCMSK0
+	else ifeq ($(MCU), attiny44)
+		PCIE_B2 = PCIE0
+		PCMSK_B2 = PCMSK0
+	else ifeq ($(MCU), attiny84)
+		PCIE_B2 = PCIE0
+		PCMSK_B2 = PCMSK0
+	else 
+		PCIE_B2 = PCIE
+		PCMSK_B2 = PCMSK
+	endif
 endif
+
 
 ifeq ($(LEDOUT_PORT), B)
 	DDR_LEDOUT = DDRB
@@ -93,6 +147,8 @@ all:
 	-DDDR_B1=${DDR_B1} -DPORT_B1=${PORT_B1} -DPIN_B1=${PIN_B1} \
 	-DDDR_B2=${DDR_B2} -DPORT_B2=${PORT_B2} -DPIN_B2=${PIN_B2} \
 	-DDDR_SWITCH=${DDR_SWITCH} -DPORT_SWITCH=${PORT_SWITCH} -DPIN_SWITCH=${PIN_SWITCH} \
+	-DPCIE_B1=${PCIE_B1} -DPCIE_B2=${PCIE_B2} \
+	-DPCMSK_B1=${PCMSK_B1} -DPCMSK_B2=${PCMSK_B2} \
 	-o ${TARGET}.bin ${SRCS}
 	${OBJCOPY} -j .text -j .data -O ihex ${TARGET}.bin ${TARGET}.hex
 
