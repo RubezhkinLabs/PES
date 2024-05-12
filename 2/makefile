@@ -1,18 +1,18 @@
-LED1_PORT = A # у меня указание пинов не православное, нужно чтобы переменная была "A2" собвственно нужно поменять условия
+LED1_PORT = B
 LED1_PIN = 2
-LED2_PORT = A
+LED2_PORT = B
 LED2_PIN = 4
-LEDOUT_PORT = A
+LEDOUT_PORT = B
 LEDOUT_PIN = 1
-B1_PORT = A
-B1_PIN = 5
-B2_PORT =A
-B2_PIN = 3
-SWITCH_PORT = A
+B1_PORT = B
+B1_PIN = 3
+B2_PORT = B
+B2_PIN = 5
+SWITCH_PORT = B
 SWITCH_PIN = 0
 
-MCU=attiny24
-F_CPU = 16000000
+MCU=attiny13
+F_CPU=1200000
 CC=avr-gcc
 OBJCOPY=avr-objcopy
 CFLAGS=-std=c99 -Wall -g -Os -mmcu=${MCU} -DF_CPU=${F_CPU} -I.
@@ -41,77 +41,23 @@ endif
 
 ifeq ($(B1_PORT), B)
 	DDR_B1 = DDRB
-	PORT_B1 = PORTB
-	PIN_B1 = PINB
-	ifeq ($(MCU), attiny24)
-		PCIE_B1 = PCIE1
-		PCMSK_B1 = PCMSK1
-	else ifeq ($(MCU), attiny44)
-		PCIE_B1 = PCIE1
-		PCMSK_B1 = PCMSK1
-	else ifeq ($(MCU), attiny84)
-		PCIE_B1 = PCIE1
-		PCMSK_B1 = PCMSK1
-	else
-		PCIE_B1 = PCIE
-		PCMSK_B1 = PCMSK
-	endif
+	PORT_B1 =PORTB
+	PIN_B1 =PINB
 else
-	DDR_B1 = DDRA
-	PORT_B1 = PORTA
-	PIN_B1 = PINA
-	ifeq ($(MCU), attiny24)
-		PCIE_B1 = PCIE0
-		PCMSK_B1 = PCMSK0
-	else ifeq ($(MCU), attiny44)
-		PCIE_B1 = PCIE0
-		PCMSK_B1 = PCMSK0
-	else ifeq ($(MCU), attiny84)
-		PCIE_B1 = PCIE0
-		PCMSK_B1 = PCMSK0
-	else 
-		PCIE_B1 = PCIE
-		PCMSK_B1 = PCMSK
-	endif
+	DDR_B1 =DDRA
+	PORT_B1 =PORTA
+	PIN_B1 =PINA
 endif
-
 
 ifeq ($(B2_PORT), B)
- 	DDR_B2 = DDRB
- 	PORT_B2 = PORTB
- 	PIN_B2 = PINB
-	ifeq ($(MCU), attiny24)
-		PCIE_B2 = PCIE1
-		PCMSK_B2 = PCMSK1
-	else ifeq ($(MCU), attiny44)
-		PCIE_B2 = PCIE1
-		PCMSK_B2 = PCMSK1
-	else ifeq ($(MCU), attiny84)
-		PCIE_B2 = PCIE1
-		PCMSK_B2 = PCMSK1
-	else
-		PCIE_B2 = PCIE
-		PCMSK_B2 = PCMSK
-	endif
+	DDR_B2 = DDRB
+	PORT_B2 =PORTB
+	PIN_B2 =PINB
 else
-	DDR_B2 = DDRA
-	PORT_B2 = PORTA
-	PIN_B2 = PINA
-	ifeq ($(MCU), attiny24)
-		PCIE_B2 = PCIE0
-		PCMSK_B2 = PCMSK0
-	else ifeq ($(MCU), attiny44)
-		PCIE_B2 = PCIE0
-		PCMSK_B2 = PCMSK0
-	else ifeq ($(MCU), attiny84)
-		PCIE_B2 = PCIE0
-		PCMSK_B2 = PCMSK0
-	else 
-		PCIE_B2 = PCIE
-		PCMSK_B2 = PCMSK
-	endif
+	DDR_B2 =DDRA
+	PORT_B2 =PORTA
+	PIN_B2 =PINA
 endif
-
 
 ifeq ($(LEDOUT_PORT), B)
 	DDR_LEDOUT = DDRB
@@ -147,8 +93,6 @@ all:
 	-DDDR_B1=${DDR_B1} -DPORT_B1=${PORT_B1} -DPIN_B1=${PIN_B1} \
 	-DDDR_B2=${DDR_B2} -DPORT_B2=${PORT_B2} -DPIN_B2=${PIN_B2} \
 	-DDDR_SWITCH=${DDR_SWITCH} -DPORT_SWITCH=${PORT_SWITCH} -DPIN_SWITCH=${PIN_SWITCH} \
-	-DPCIE_B1=${PCIE_B1} -DPCIE_B2=${PCIE_B2} \
-	-DPCMSK_B1=${PCMSK_B1} -DPCMSK_B2=${PCMSK_B2} \
 	-o ${TARGET}.bin ${SRCS}
 	${OBJCOPY} -j .text -j .data -O ihex ${TARGET}.bin ${TARGET}.hex
 
